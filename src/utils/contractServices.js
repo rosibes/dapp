@@ -67,9 +67,10 @@ export const depositFund = async (depositValue) => {
         await deposit.wait(); // Așteaptă ca tranzacția să fie procesată
     } catch (error) {
         console.error("Error during deposit: ", error.message);
-        
+        console.log("Eroare: ", error.message);
+
         // Verifică dacă eroarea este legată de lipsa fondurilor
-        if (error.message.includes("insufficient funds for gas")) {
+        if (error.message.includes("missing revert data")) {
             toast.error("Nu ai suficiente fonduri pentru a acoperi taxele de gaz!");
         } else {
             toast.error("A apărut o eroare la depunerea fondurilor.");
