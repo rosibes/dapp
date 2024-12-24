@@ -87,3 +87,21 @@ export const withdrawFund = async () =>{
 };
 
 
+//Function to transfer ETH to another address
+export const transferETH = async (recipientAdress, ethValue) => {
+
+  try {
+    const ethValueInWei = parseEther(ethValue); //Convert ETH to Wei
+    const transferTx = await contract.transferEthTo(recipientAdress, ethValueInWei); // Call the smart contract function
+    await transferTx.wait();
+    toast.success(`Successfully transferred ${ethValue} ETH to ${recipientAdress}`);
+  } catch (error){
+    console.error("Error during ETH transfer: ", error.message);
+    if (error.message.includes("insufficient funds")) {
+        toast.error("Fonduri insuficiente pentru transfer!");
+    } else {
+        toast.error("A apărut o eroare în timpul transferului.");
+    }
+  }
+};
+

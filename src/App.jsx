@@ -5,56 +5,53 @@ import ConnectWalletButton from "./components/ConnectWalletButton";
 import ContractInfo from "./components/ContractInfo";
 import ContractActions from "./components/ContractActions";
 import "react-toastify/dist/ReactToastify.css";
+import './index.css';
 
 function App() {
   const [account, setAccount] = useState(null); // pentru a ține cont de adresa portofelului conectat
   const [provider, setProvider] = useState(null); // providerul de Ethereum (MetaMask)
 
   useEffect(() => {
-    // Verifică dacă un cont este deja conectat atunci când aplicația este încărcată
     const fetchCurAccount = async () => {
-      const account = await requestAccount(provider); // Solicită contul curent
+      const account = await requestAccount(provider);
       if (account) {
-        setAccount(account); // Setează contul dacă există
+        setAccount(account);
       }
     };
 
     if (provider) {
       fetchCurAccount();
     }
-  }, [provider]); // Încearcă din nou doar dacă provider-ul se schimbă
+  }, [provider]);
 
   useEffect(() => {
-    // Ascultă schimbările de cont în MetaMask (de exemplu, dacă utilizatorul schimbă contul)
     const handleAccountChanged = (newAccounts) => {
       setAccount(newAccounts.length > 0 ? newAccounts[0] : null);
     };
 
     if (window.ethereum) {
-      window.ethereum.on("accountsChanged", handleAccountChanged); // Ascultă schimbările de cont
+      window.ethereum.on("accountsChanged", handleAccountChanged);
     }
 
     return () => {
-      window.ethereum?.removeListener("accountsChanged", handleAccountChanged); // Curăță ascultătorul la demontarea componentei
+      window.ethereum?.removeListener("accountsChanged", handleAccountChanged);
     };
   }, []);
 
-  // Funcția de deconectare (resetarea contului)
   const handleLogout = () => {
-    setAccount(null); // Resetează contul din starea aplicației
-    setProvider(null); // Resetează providerul
+    setAccount(null);
+    setProvider(null);
   };
 
   return (
-    <div className="app">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-custom-blue">
       <ToastContainer />
       {!account ? (
         <ConnectWalletButton setAccount={setAccount} setProvider={setProvider} />
       ) : (
-        <div className="contract-interactions">
-          <ContractInfo account={account} />
+        <div className="w-full max-w-lg">
+          <ContractInfo account={account} handleLogout={handleLogout} />
           <ContractActions />
-          <button onClick={handleLogout}>Logout</button> {/* Buton de logout */}
         </div>
       )}
     </div>
